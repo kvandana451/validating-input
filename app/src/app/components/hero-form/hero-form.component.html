@@ -22,7 +22,7 @@
 
 <form *ngIf="heroForm" [formGroup]="heroForm">
     <input type="text" formControlName="name" class="form-control" />
-    <div *ngIf="formControl_name?.invalid && (formControl_name?.dirty || formControl_name?.touched) "
+    <div *ngIf="formControl_name?.invalid && (formControl_name?.dirty||formControl_name?.touched)  "
         class="alert alert-danger">
         <div *ngIf="formControl_name?.errors?.['required']">
             Name is required
@@ -34,11 +34,18 @@
         <div *ngIf="formControl_name?.errors?.['forbiddenName']">
             Name cannot be bob
         </div>
+
     </div>
+    <div *ngIf="heroForm.errors?.['identityRevealed'] && (heroForm.touched || heroForm.dirty)"
+        class="cross-validation-error-message alert alert-danger">
+        Name cannot match alter ego.
+    </div>
+
 </form>
 <pre>
   touched: {{ formControl_name?.touched }}  
   dirty: {{ formControl_name?.dirty }}  
   invalid: {{ formControl_name?.invalid }}  
   errors: {{ formControl_name?.errors | json }}
+  {{heroForm?.errors|json}}
 </pre>

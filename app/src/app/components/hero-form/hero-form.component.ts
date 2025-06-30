@@ -7,6 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { forbiddenNameValidator } from '../../shared/forbidden-name.directive';
+import { identityRevealedValidator } from '../../shared/identity-revealed.directive';
 
 @Component({
   selector: 'app-hero-form',
@@ -50,8 +51,8 @@ export class HeroFormComponent {
   heroForm?: FormGroup;
   powers = ['Really Smart', 'Super Flexible', 'Weather Changer'];
   hero = {
-    name: 'Dr',
-    alterEgo: 'Dr.What',
+    name: 'Dr..',
+    alterEgo: 'Dr..',
     power: this.powers[0],
   };
   // GETTERS to access form controls
@@ -62,15 +63,18 @@ export class HeroFormComponent {
     return this.heroForm?.get('power');
   }
   ngOnInit() {
-    this.heroForm = new FormGroup({
-      name: new FormControl(this.hero.name, [
-        Validators.required,
-        Validators.minLength(4),
-        forbiddenNameValidator(/bob/i), // <-- Here's how you pass in the custom validator.
-      ]),
-      alterEgo: new FormControl(this.hero.alterEgo),
-      power: new FormControl(this.hero.power, Validators.required),
-    });
+    this.heroForm = new FormGroup(
+      {
+        name: new FormControl(this.hero.name, [
+          Validators.required,
+          Validators.minLength(4),
+          forbiddenNameValidator(/bob/i), // <-- Here's how you pass in the custom validator.
+        ]),
+        alterEgo: new FormControl(this.hero.alterEgo),
+        power: new FormControl(this.hero.power, Validators.required),
+      },
+      { validators: identityRevealedValidator }
+    );
     console.log(this.heroForm.get('name')?.value);
   }
 }
