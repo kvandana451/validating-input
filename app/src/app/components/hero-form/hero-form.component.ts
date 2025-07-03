@@ -8,6 +8,7 @@ import {
 } from '@angular/forms';
 import { forbiddenNameValidator } from '../../shared/forbidden-name.directive';
 import { identityRevealedValidator } from '../../shared/identity-revealed.directive';
+import { uniqueAlterEgoValidator } from '../../shared/uniqueAlterEgoValidator';
 
 @Component({
   selector: 'app-hero-form',
@@ -62,6 +63,7 @@ export class HeroFormComponent {
   get formControl_power() {
     return this.heroForm?.get('power');
   }
+  constructor(private uniquealterEgoValidator: uniqueAlterEgoValidator) {}
   ngOnInit() {
     this.heroForm = new FormGroup(
       {
@@ -70,7 +72,14 @@ export class HeroFormComponent {
           Validators.minLength(4),
           forbiddenNameValidator(/bob/i), // <-- Here's how you pass in the custom validator.
         ]),
-        alterEgo: new FormControl(this.hero.alterEgo),
+        alterEgo: new FormControl(this.hero.alterEgo, {
+          asyncValidators: [
+            this.uniquealterEgoValidator.validate.bind(
+              this.uniquealterEgoValidator
+            ),
+          ],
+          updateOn: 'blur',
+        }),
         power: new FormControl(this.hero.power, Validators.required),
       },
       { validators: identityRevealedValidator }
