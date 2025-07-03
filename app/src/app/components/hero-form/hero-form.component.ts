@@ -1,4 +1,4 @@
-import { JsonPipe, NgIf } from '@angular/common';
+import { JsonPipe, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {
   FormControl,
@@ -12,7 +12,7 @@ import { uniqueAlterEgoValidator } from '../../shared/uniqueAlterEgoValidator';
 
 @Component({
   selector: 'app-hero-form',
-  imports: [ReactiveFormsModule, NgIf, JsonPipe],
+  imports: [ReactiveFormsModule, NgIf, JsonPipe, NgFor],
   templateUrl: './hero-form.component.html',
   styleUrl: './hero-form.component.scss',
 })
@@ -60,10 +60,17 @@ export class HeroFormComponent {
   get formControl_name() {
     return this.heroForm?.get('name');
   }
+  get formControl_alterEgo() {
+    return this.heroForm?.get('alterEgo');
+  }
   get formControl_power() {
     return this.heroForm?.get('power');
   }
   constructor(private uniquealterEgoValidator: uniqueAlterEgoValidator) {}
+  isSubmitted: boolean = false;
+  onSubmitForm() {
+    this.isSubmitted = true;
+  }
   ngOnInit() {
     this.heroForm = new FormGroup(
       {
@@ -85,5 +92,11 @@ export class HeroFormComponent {
       { validators: identityRevealedValidator }
     );
     console.log(this.heroForm.get('name')?.value);
+    //IMPORTANT:Auto-reset isSubmitted when user edits the form again
+    this.heroForm.valueChanges.subscribe(() => {
+      if (this.isSubmitted) {
+        this.isSubmitted = false; // auto-reset when form is changed
+      }
+    });
   }
 }

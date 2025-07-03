@@ -21,31 +21,88 @@
 </pre> -->
 
 <form *ngIf="heroForm" [formGroup]="heroForm">
-    <input type="text" formControlName="name" class="form-control" />
-    <div *ngIf="formControl_name?.invalid && (formControl_name?.dirty||formControl_name?.touched)  "
-        class="alert alert-danger">
-        <div *ngIf="formControl_name?.errors?.['required']">
-            Name is required
+    <div [hidden]="isSubmitted">
+        <!-- && (heroForm.touched || heroForm.dirty) -->
+        <div class="cross-validation" [class.cross-validation-error]="heroForm.errors?.['identityRevealed'] ">
+            <!-- Form Control Name -->
+
+            <div class="form-group">
+                <label for="formControl_name">Name</label>
+                <input type="text" formControlName="name" id="formControl_name" class="form-control" />
+                <!-- NAME control VALIDATORS -->
+                <div *ngIf="
+        formControl_name?.invalid &&
+        (formControl_name?.dirty || formControl_name?.touched)
+      " class="alert alert-danger">
+                    <div *ngIf="formControl_name?.errors?.['required']">Name is required</div>
+                    <div *ngIf="formControl_name?.errors?.['minlength']">
+                        Name must be at least 4 characters long.
+                    </div>
+
+                    <div *ngIf="formControl_name?.errors?.['forbiddenName']">
+                        Name cannot be bob
+                    </div>
+                </div>
+            </div>
+            <!-- Form Control Alter Ego -->
+
+            <div class="form-group">
+                <label for="formControl_alterEgo">Alter Ego</label>
+                <input type="text" id="formControl_alterEgo" class="form-control" formControlName="alterEgo" />
+                <!-- Alter Ego control VALIDATORS -->
+
+                <div *ngIf="formControl_alterEgo?.pending">VALIDATING..</div>
+                <div *ngIf="formControl_alterEgo?.invalid" class="alert alert-danger">
+                    <div *ngIf=" formControl_alterEgo?.errors?.['uniqueAlterEgo']">
+                        Alter Ego is Already Taken
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="heroForm.errors?.['identityRevealed'] && (heroForm.touched || heroForm.dirty)"
+                class="cross-validation-error-message alert alert-danger">
+                <div>Name cannot match alter ego.</div>
+            </div>
         </div>
-        <div *ngIf="formControl_name?.errors?.['minlength']">
-            Name must be at least 4 characters long.
+        <!-- Form Control Power-->
+        <div class="form-group">
+            <label for="formControl_power">Hero Power</label>
+            <select id="formControl_power" class="form-control" formControlName="power">
+                <option *ngFor="let p of powers" [value]="p">{{ p }}</option>
+            </select>
+            <!-- Power control VALIDATORS -->
+            <div *ngIf="
+        formControl_power?.invalid &&
+        (formControl_power?.dirty || formControl_power?.touched)
+      " class="alert alert-danger">
+                <div *ngIf="formControl_power?.errors?.['required']">
+                    Power is required
+                </div>
+            </div>
         </div>
 
-        <div *ngIf="formControl_name?.errors?.['forbiddenName']">
-            Name cannot be bob
-        </div>
 
+        <p>Complete the form to enable the submit button</p>
+        <button type="submit" [disabled]="heroForm?.invalid" (click)="onSubmitForm()">Submit</button>
+        <button type="button" (click)="heroForm?.reset()">Reset</button>
     </div>
-    <div *ngIf="heroForm.errors?.['identityRevealed'] && (heroForm.touched || heroForm.dirty)"
-        class="cross-validation-error-message alert alert-danger">
-        Name cannot match alter ego.
-    </div>
-
 </form>
-<pre>
+<div class="submitted-message" *ngIf="isSubmitted">
+    <p>You've submitted your hero,{{heroForm?.value?.name}}</p>
+    <button type="button" (click)="heroForm?.reset()">Add new hero</button>
+</div>
+
+<!-- <pre>
   touched: {{ formControl_name?.touched }}  
   dirty: {{ formControl_name?.dirty }}  
   invalid: {{ formControl_name?.invalid }}  
   errors: {{ formControl_name?.errors | json }}
-  {{heroForm?.errors|json}}
+  {{heroForm?.value |json}}
+  {{ heroForm?.errors | json }}
 </pre>
+<pre>
+    touched: {{ formControl_alterEgo?.touched }}  
+  dirty: {{ formControl_alterEgo?.dirty }}  
+  invalid: {{ formControl_alterEgo?.invalid }}  
+  errors: {{ formControl_alterEgo?.errors | json }}
+</pre> -->
